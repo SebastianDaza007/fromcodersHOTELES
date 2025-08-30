@@ -6,7 +6,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
 }
 
 datasource db {
@@ -14,56 +13,59 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Insumo {
+model insumo {
   id_insumo  Int     @id @default(autoincrement())
   nom_insumo String
-  // otras columnas se agregan después
-  InsumosPorDeposito InsumosPorDeposito[]
+  insumos_por_deposito insumos_por_deposito[]
 }
 
-model Deposito {
+model deposito {
   id_deposito  Int     @id @default(autoincrement())
   nom_deposito String
-  // otras columnas se agregan después
-  InsumosPorDeposito InsumosPorDeposito[]
-  MovimientoStock    MovimientoStock[]
+  insumos_por_deposito insumos_por_deposito[]
+  movimiento_stock movimiento_stock[]
 }
 
-model InsumosPorDeposito {
+model insumos_por_deposito {
   id_insumos_deposito Int     @id @default(autoincrement())
   id_insumo           Int
   id_deposito         Int
   stock_insumo        Int
-  // relaciones
-  insumo   Insumo  @relation(fields: [id_insumo], references: [id_insumo])
-  deposito Deposito @relation(fields: [id_deposito], references: [id_deposito])
-  DetalleMovimiento DetalleMovimiento[]
+  insumo   insumo  @relation(fields: [id_insumo], references: [id_insumo])
+  deposito deposito @relation(fields: [id_deposito], references: [id_deposito])
+  detalle_movimiento detalle_movimiento[]
 }
 
-model DetalleMovimiento {
+model detalle_movimiento {
   id_detalle_mov      Int @id @default(autoincrement()) 
   id_insumos_deposito Int
   id_mov_stock        Int
   cantidad_mov        Int
-  //!! Relaciones
-  insumosPorDeposito  InsumosPorDeposito @relation(fields: [id_insumos_deposito], references: [id_insumos_deposito])
-  movimientoStock     MovimientoStock    @relation(fields: [id_mov_stock], references: [id_mov_stock])
+  insumos_por_deposito  insumos_por_deposito @relation(fields: [id_insumos_deposito], references: [id_insumos_deposito])
+  movimiento_stock     movimiento_stock    @relation(fields: [id_mov_stock], references: [id_mov_stock])
 }
 
-model MovimientoStock {
+model movimiento_stock {
   id_mov_stock Int @id @default(autoincrement())
   id_deposito  Int
   id_tipo_mov  Int
   fecha_registro DateTime @default(now())
-
-  //Relaciones
-  deposito      Deposito @relation(fields: [id_deposito], references: [id_deposito])
-  tipoMovimiento TipoMovimiento @relation(fields: [id_tipo_mov], references: [id_tipo_mov])
-  DetalleMovimiento DetalleMovimiento[]
+  deposito      deposito @relation(fields: [id_deposito], references: [id_deposito])
+  tipo_movimiento tipo_movimiento @relation(fields: [id_tipo_mov], references: [id_tipo_mov])
+  detalle_movimiento detalle_movimiento[]
 }
 
-model TipoMovimiento {
+model tipo_movimiento {
   id_tipo_mov Int @id @default(autoincrement())
   nombre_mov  String
-  MovimientoStock MovimientoStock[]
+  movimiento_stock movimiento_stock[]
+}
+
+model user {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  role      String   @default("user")
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 }
