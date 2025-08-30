@@ -13,3 +13,57 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Insumo {
+  id_insumo  Int     @id @default(autoincrement())
+  nom_insumo String
+  // otras columnas se agregan después
+  InsumosPorDeposito InsumosPorDeposito[]
+}
+
+model Deposito {
+  id_deposito  Int     @id @default(autoincrement())
+  nom_deposito String
+  // otras columnas se agregan después
+  InsumosPorDeposito InsumosPorDeposito[]
+  MovimientoStock    MovimientoStock[]
+}
+
+model InsumosPorDeposito {
+  id_insumos_deposito Int     @id @default(autoincrement())
+  id_insumo           Int
+  id_deposito         Int
+  stock_insumo        Int
+  // relaciones
+  insumo   Insumo  @relation(fields: [id_insumo], references: [id_insumo])
+  deposito Deposito @relation(fields: [id_deposito], references: [id_deposito])
+  DetalleMovimiento DetalleMovimiento[]
+}
+
+model DetalleMovimiento {
+  id_detalle_mov      Int @id @default(autoincrement()) 
+  id_insumos_deposito Int
+  id_mov_stock        Int
+  cantidad_mov        Int
+  //!! Relaciones
+  insumosPorDeposito  InsumosPorDeposito @relation(fields: [id_insumos_deposito], references: [id_insumos_deposito])
+  movimientoStock     MovimientoStock    @relation(fields: [id_mov_stock], references: [id_mov_stock])
+}
+
+model MovimientoStock {
+  id_mov_stock Int @id @default(autoincrement())
+  id_deposito  Int
+  id_tipo_mov  Int
+  fecha_registro DateTime @default(now())
+
+  //Relaciones
+  deposito      Deposito @relation(fields: [id_deposito], references: [id_deposito])
+  tipoMovimiento TipoMovimiento @relation(fields: [id_tipo_mov], references: [id_tipo_mov])
+  DetalleMovimiento DetalleMovimiento[]
+}
+
+model TipoMovimiento {
+  id_tipo_mov Int @id @default(autoincrement())
+  nombre_mov  String
+  MovimientoStock MovimientoStock[]
+}
