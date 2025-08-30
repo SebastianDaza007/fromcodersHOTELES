@@ -1,7 +1,15 @@
+// filepath: /ing/sis3/fromcodersHOTELES/next.config.ts
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  async rewrites() {
+    return [
+      {
+        source: "/admin/:slug*",
+        destination: "/admin/:slug*",
+      },
+    ];
+  },
 };
 
 export default nextConfig;
